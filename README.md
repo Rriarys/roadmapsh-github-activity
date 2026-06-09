@@ -2,6 +2,9 @@
 
 A simple command-line application that fetches a GitHub user's public activity and prints it in a readable format.
 
+This is a small educational pet project created as part of the roadmap.sh project ideas pool:
+https://roadmap.sh/projects/github-user-activity
+
 ## Usage
 
 ```bash
