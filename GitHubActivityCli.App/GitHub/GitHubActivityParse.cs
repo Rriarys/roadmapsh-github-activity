@@ -76,4 +76,92 @@ internal class GitHubActivityParse
             }
         }
     }
+
+    // Calculates and displays summarized activity statistics
+    public static void DisplaySummaryActivity(JsonDocument activityJson)
+    {
+        var rawEvents = activityJson.RootElement.EnumerateArray();
+
+        var createdRepoNames = new HashSet<string>();
+        var pushedRepoNames = new HashSet<string>();
+        var openedPullRepoNames = new HashSet<string>();
+        var commentedRepoNames = new HashSet<string>();
+        var starredRepoNames = new HashSet<string>();
+
+        int pushedCount = 0;
+        int openedPullCount = 0;
+        int commentedCount = 0;
+
+        foreach (var evt in rawEvents)
+        {
+            var eventType = evt.GetProperty("type").GetString();
+            var repoName = evt.GetProperty("repo").GetProperty("name").GetString() ?? "unknown";
+
+            // Cleans up repository name from user prefix if present
+            var shortRepoName = repoName.Contains('/') ? repoName.Split('/')[1] : repoName;
+
+            switch (eventType)
+            {
+                case "CreateEvent":
+                    if (evt.TryGetProperty("payload", out var createPayload) &&
+                        createPayload.TryGetProperty("ref_type", out var refTypeProp) &&
+                        refTypeProp.GetString() == "repository")
+                    {
+                        createdRepoNames.Add(shortRepoName);
+                    }
+                    break;
+
+                case "PushEvent":
+                    pushedCount++;
+                    pushedRepoNames.Add(shortRepoName);
+                    break;
+
+                case "PullRequestEvent":
+                    if (evt.TryGetProperty("payload", out var prPayload) &&
+                        prPayload.TryGetProperty("action", out var prActionProp) &&
+                        prActionProp.GetString() == "opened")
+                    {
+                        openedPullCount++;
+                        openedPullRepoNames.Add(shortRepoName);
+                    }
+                    break;
+
+                case "IssueCommentEvent":
+                    commentedCount++;
+                    commentedRepoNames.Add(shortRepoName);
+                    break;
+
+                case "WatchEvent":
+                    starredRepoNames.Add(shortRepoName);
+                    break;
+            }
+        }
+
+        if (createdRepoNames.Count > 0)
+        {
+            Console.WriteLine($"Created {createdRepoNames.Count} new {(createdRepoNames.Count == 1 ? "repository" : "repositories")} called {string.Join(" & ", createdRepoNames)}");
+        }
+
+        if (pushedCount > 0)
+        {
+            Console.WriteLine($"Pushed {pushedCount} new {(pushedCount == 1 ? "change" : "changes")} in {(pushedRepoNames.Count == 1 ? "repository" : "repositories")} {string.Join(" & ", pushedRepoNames)}");
+        }
+
+        if (openedPullCount > 0)
+        {
+            Console.WriteLine($"Opened {openedPullCount} new pull {(openedPullCount == 1 ? "request" : "requests")} in {(openedPullRepoNames.Count == 1 ? "repository" : "repositories")} {string.Join(" & ", openedPullRepoNames)}");
+        }
+
+        if (commentedCount > 0)
+        {
+            Console.WriteLine($"Added {commentedCount} new {(commentedCount == 1 ? "comment" : "comments")} in {(commentedRepoNames.Count == 1 ? "repository" : "repositories")} {string.Join(" & ", commentedRepoNames)}");
+        }
+
+        if (starredRepoNames.Count > 0)
+        {
+            Console.WriteLine($"Starred {string.Join(" & ", starredRepoNames)}");
+        }
+
+        Console.WriteLine();
+    }
 }

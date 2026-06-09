@@ -34,7 +34,10 @@ internal class AppCore
                 {
                     GitHubActivityParse.ParseAndDisplayActivity(result.Activity!);
 
-                    Console.WriteLine();
+                    Console.WriteLine("\nSummarized activity statistics...\n");
+
+                    GitHubActivityParse.DisplaySummaryActivity(result.Activity!);
+
                 }
             }
             else if (result.IsNotFound)
