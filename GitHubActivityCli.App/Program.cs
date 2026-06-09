@@ -1,1 +1,5 @@
-﻿Console.WriteLine("Enter GitHub username to check:");
+﻿using GitHubActivityCli.App.Cli;
+
+string username = UserInput.GetGitHubUsername();
+
+Console.WriteLine(username);
