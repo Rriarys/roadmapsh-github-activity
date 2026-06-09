@@ -19,7 +19,7 @@ internal class GitHubActivityClient
 
             if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
             {
-                Console.WriteLine("User not found");
+                Console.WriteLine($"\nUser '{username}' not found\n");
                 return null;
             }
 
@@ -30,12 +30,12 @@ internal class GitHubActivityClient
         }
         catch (HttpRequestException ex)
         {
-            Console.WriteLine($"Error fetching user activity: {ex.Message}");
+            Console.WriteLine($"\nError fetching user activity: {ex.Message}\n");
             return null;
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Unexpected error: {ex.Message}");
+            Console.WriteLine($"\nUnexpected error: {ex.Message}\n");
             return null;
         }
     }

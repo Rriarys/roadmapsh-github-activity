@@ -34,7 +34,25 @@ internal class GitHubActivityParse
                         ? actionProp.GetString()
                         : "unknown";
 
-                    Console.WriteLine($"[IssuesEvent] Repo: {repoName}, Action: {issueAction}");
+                    var issueTitle = payload.TryGetProperty("issue", out var issueProp) &&
+                                     issueProp.TryGetProperty("title", out var titleProp)
+                        ? titleProp.GetString()
+                        : "unknown";
+
+                    Console.WriteLine($"[IssuesEvent] Repo: {repoName}, Action: {issueAction}, Issue: {issueTitle}");
+                    break;
+
+                case "PullRequestEvent":
+                    var pullRequestAction = payload.TryGetProperty("action", out var pullActionProp)
+                        ? pullActionProp.GetString()
+                        : "unknown";
+
+                    var pullRequestTitle = payload.TryGetProperty("pull_request", out var pullRequestProp) &&
+                                           pullRequestProp.TryGetProperty("title", out var pullTitleProp)
+                        ? pullTitleProp.GetString()
+                        : "unknown";
+
+                    Console.WriteLine($"[PullRequestEvent] Repo: {repoName}, Action: {pullRequestAction}, Pull Request: {pullRequestTitle}");
                     break;
 
                 case "CreateEvent":
@@ -48,14 +66,14 @@ internal class GitHubActivityParse
                     break;
 
                 case "IssueCommentEvent":
-                    var issueTitle = payload.TryGetProperty("issue", out var issueProp) &&
-                                     issueProp.TryGetProperty("title", out var titleProp)
-                        ? titleProp.GetString()
+                    var issueCommentTitle = payload.TryGetProperty("issue", out var issueCommentProp) &&
+                                            issueCommentProp.TryGetProperty("title", out var issueCommentTitleProp)
+                        ? issueCommentTitleProp.GetString()
                         : "unknown";
 
-                    Console.WriteLine($"[IssueCommentEvent] Repo: {repoName}, Issue: {issueTitle}");
+                    Console.WriteLine($"[IssueCommentEvent] Repo: {repoName}, Issue: {issueCommentTitle}");
                     break;
             }
         }
-    }   
+    }
 }

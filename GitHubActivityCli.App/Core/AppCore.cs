@@ -7,21 +7,31 @@ internal class AppCore
 {
     public static async Task RunAsync()
     {
-        string username = UserInput.GetGitHubUsername();
-        Console.WriteLine(username);
-
-        Console.WriteLine("\nGetting user activity...\n");
-
-        var client = new GitHubActivityClient();
-        var activity = await client.GetUserActivityAsync(username);
-
-        if (activity != null)
+        bool isRunning = true;
+        while (isRunning) 
         {
-            GitHubActivityParse.ParseAndDisplayActivity(activity);
+            string username = UserInput.GetGitHubUsername();
+
+            if (username == "exit")
+            {
+                break;
+            }
+
+            Console.WriteLine($"\nGetting {username}'s activity...\n");
+
+            var client = new GitHubActivityClient();
+            var activity = await client.GetUserActivityAsync(username);
+
+            if (activity != null)
+            {
+                GitHubActivityParse.ParseAndDisplayActivity(activity);
+                Console.WriteLine("\n");
+            }
+            else
+            {
+                Console.WriteLine($"\nUnexpected error while fetching {username}'s activity.\n");
+            }
         }
-        else
-        {
-            Console.WriteLine("Unexpected error");
-        }
+
     }
 }
