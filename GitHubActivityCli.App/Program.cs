@@ -19,6 +19,7 @@ else
 }
 
 Console.WriteLine("\nPretty user activity:\n");
+
 if (activity != null)
 {
     GitHubActivityParse.PrettyParseAndDisplayActivity(activity);
