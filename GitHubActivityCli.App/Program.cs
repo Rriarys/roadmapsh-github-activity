@@ -17,3 +17,12 @@ else
 {
     Console.WriteLine("Unexpected error");
 }
+
+if (activity != null)
+{
+    GitHubActivityParse.PrettyParseAndDisplayActivity(activity);
+}
+else
+{
+    Console.WriteLine("Unexpected error");
+}
